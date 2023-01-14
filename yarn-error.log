@@ -1,0 +1,65 @@
+Arguments: 
+  /opt/homebrew/Cellar/node/18.10.0/bin/node /usr/local/bin/yarn add @types/X -D
+
+PATH: 
+  /Users/zacharycheng/.docker/bin:/Users/zacharycheng/.amplify/bin:/opt/homebrew/opt/mysql-client/bin:/opt/homebrew/opt/openssl@1.1/bin:/Users/zacharycheng/opt/miniconda3/bin:/Users/zacharycheng/opt/miniconda3/condabin:/Users/zacharycheng/.local/share/solana/install/active_release/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/Library/Frameworks/Python.framework/Versions/3.9/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Library/Apple/usr/bin:/Users/zacharycheng/.cargo/bin:/Users/zacharycheng/.local/bin:/Users/zacharycheng/.local/bin
+
+Yarn version: 
+  1.22.17
+
+Node version: 
+  18.10.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/@types%2fX: Not found
+      at params.callback [as _callback] (/usr/local/lib/node_modules/yarn/lib/cli.js:67029:18)
+      at self.callback (/usr/local/lib/node_modules/yarn/lib/cli.js:140883:22)
+      at Request.emit (node:events:513:28)
+      at Request.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:141855:10)
+      at Request.emit (node:events:513:28)
+      at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:141777:12)
+      at Object.onceWrapper (node:events:627:28)
+      at IncomingMessage.emit (node:events:525:35)
+      at endReadableNT (node:internal/streams/readable:1359:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+
+npm manifest: 
+  {
+    "name": "hidenseek",
+    "version": "1.0.0",
+    "main": "node_modules/expo/AppEntry.js",
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web"
+    },
+    "dependencies": {
+      "@expo/vector-icons": "^13.0.0",
+      "@react-navigation/native": "^6.1.1",
+      "expo": "~47.0.9",
+      "expo-status-bar": "~1.4.2",
+      "nativewind": "^2.0.11",
+      "react": "18.1.0",
+      "react-dom": "18.1.0",
+      "react-native": "0.70.5",
+      "react-native-web": "~0.18.9",
+      "react-query": "^3.39.2"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.12.9",
+      "@types/react": "~18.0.14",
+      "@types/react-native": "~0.70.6",
+      "typescript": "^4.6.3"
+    },
+    "private": true
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
