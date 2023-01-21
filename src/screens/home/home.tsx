@@ -1,11 +1,11 @@
 import { NavigationProp } from '@react-navigation/native';
 import React from 'react';
-import { SafeAreaView, Text } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
 
 export default function Home({ navigation }: { navigation: NavigationProp<any> }) {
     const [loading, setLoading] = React.useState<boolean>(true);
-    
+
     const auth = useAuth();
     React.useEffect(() => {
         if (auth.userData === undefined) {
@@ -17,7 +17,15 @@ export default function Home({ navigation }: { navigation: NavigationProp<any> }
 
     return (
         <SafeAreaView className="flex justify-center items-center flex-col">
-            <Text>HOME</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("Tutorial")}>
+                <Text>Tutorial</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("JoinGame")}>
+                <Text>Join Game</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("CreateGame")}>
+                <Text>Create Game</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     );
 }   
