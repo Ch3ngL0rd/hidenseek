@@ -131,7 +131,6 @@ const useProvideAuth = (): AuthInterface => {
             .from('profiles')
             .select("*")
             .eq('id', userId);
-
         if (error) {
             throw new Error(error.message);
         } else if (profiles?.length === 0) {
