@@ -1,17 +1,19 @@
+import React from 'react';
 import { AuthProvider, useAuth } from './src/hooks/useAuth';
-import { Private } from './src/navigation/private';
-import { Public } from './src/navigation/public';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import Home from './src/screens/home/home';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const auth = useAuth();
-
   return (
     <AuthProvider>
-      {auth.user === null ?
-        <Public />
-        :
-        <Private />
-      }
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={Home} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </AuthProvider>
   );
 }
