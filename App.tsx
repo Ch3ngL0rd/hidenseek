@@ -8,6 +8,7 @@ import Tutorial from './src/screens/home/tutorial';
 import CreateGame from './src/screens/home/create-game';
 import JoinGame from './src/screens/home/join-game';
 import StartGame from './src/screens/home/start-game';
+import Ready from './src/screens/home/ready';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ export default function App() {
             options={{ headerShown: false }} />
           <Stack.Screen name="CreateGame" component={CreateGame} />
           <Stack.Screen name="StartGame" component={StartGame} />
+          <Stack.Screen name="Ready" component={Ready} />
           <Stack.Screen name="JoinGame" component={JoinGame} />
           <Stack.Screen name="Tutorial" component={Tutorial} />
         </Stack.Navigator>
