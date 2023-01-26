@@ -11,27 +11,27 @@ export default function JoinGame({ navigation }: { navigation: NavigationProp<an
     const joinGame = async () => {
         setLoading(true);
         // Make sure that game exists
-        let { data: games, error } = await supabase
+        let { data: game, error } = await supabase
             .from('games')
             .select("*")
             .eq('code', gameCode)
-        console.log(games);
+            .single()
         if (error) {
             console.log(error);
             setMessage("Error joining game")
             setLoading(false);
             return;
-        } else if (!games) {
+        } else if (!game) {
             setMessage("Game does not exist");
             setLoading(false);
             return;
-        } else if (games.length === 0) {
+        } else if (game.length === 0) {
             setMessage("Game does not exist");
             setLoading(false);
             return;
         }
 
-        navigation.navigate("Ready", { game_id: gameCode })
+        navigation.navigate("Ready", { game_id: game.id })
         setLoading(false);
     }
 
