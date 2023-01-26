@@ -3,6 +3,7 @@ import React from 'react';
 import { ActivityIndicator, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../../settings/supabase';
 import { useAuth } from '../../hooks/useAuth';
+import UploadWidget from '../../components/uploadWidget';
 
 export default function CreateAccount({ navigation }: { navigation: NavigationProp<any> }) {
     const auth = useAuth();
@@ -11,52 +12,51 @@ export default function CreateAccount({ navigation }: { navigation: NavigationPr
     const [username, setUsername] = React.useState<string>('');
     const [name, setName] = React.useState<string>('');
     const [message, setMessage] = React.useState<string>('')
+    const [avatarPath, setAvatarPath] = React.useState<string | undefined>(undefined)
 
     const submit = async () => {
         setLoading(true);
-        if (username.length <= 3) {
-            setMessage('Choose a longer username');
-            setLoading(false);
-            return;
-        }
-        if (name.length == 0) {
-            setMessage("Please enter your name");
-            setLoading(false);
-            return;
-        }
+        try {
+            if (username.length <= 3) {
+                throw new Error('Choose a longer username');
+            }
+            if (name.length === 0) {
+                throw new Error('Enter your name');
+            }
 
-        {
-            let { data: profiles, error } = await supabase
+            if (avatarPath === undefined) {
+                throw new Error('Avatar not uploaded');
+            }
+
+            const { error: insertError } = await supabase
                 .from('profiles')
-                .select("*")
-                .ilike('username', username);
+                .insert([
+                    { id: auth.user?.id, username: username, name: name, avatar: avatarPath },
+                ])
 
-            if (error) {
-                setMessage(error.message);
-                setLoading(false);
-                return;
+            if (insertError) {
+                throw new Error(insertError.message);
             }
-            if (profiles?.length !== 0) {
-                setMessage("Username taken. Choose another!")
-                setLoading(false);
-                return;
+
+            navigation.navigate("Home");
+        } catch (error) {
+            if (typeof error === 'string') {
+                setMessage(error);
+            } else {
+                console.log(error);
             }
-        }
-
-        const { data, error } = await supabase
-            .from('profiles')
-            .insert([
-                { id: auth.user?.id, username: username, name: name },
-            ])
-
-        if (error) {
-            setMessage(error.message);
+        } finally {
             setLoading(false);
-            return;
         }
-        setLoading(false);
-        
-        navigation.navigate("Home");
+    }
+
+    if (auth.user === null) {
+        // loading spinner screen
+        return (
+            <SafeAreaView className="flex justify-center items-center flex-col">
+                <ActivityIndicator size="large" color="#0000ff" />
+            </SafeAreaView>
+        )
     }
 
     return (
@@ -74,6 +74,9 @@ export default function CreateAccount({ navigation }: { navigation: NavigationPr
                 onChangeText={text => setName(text)}
                 value={name}
             />
+            <UploadWidget onUpload={(filepath) => {
+                setAvatarPath(filepath)
+            }} size={150} id={auth.user.id} />
             <TouchableOpacity onPress={submit}>
                 <Text>Submit</Text>
             </TouchableOpacity>
