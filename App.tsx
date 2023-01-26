@@ -12,6 +12,7 @@ import JoinGame from './src/screens/home/join-game';
 import StartGame from './src/screens/home/start-game';
 import Ready from './src/screens/home/ready';
 import Feed from './src/screens/game/feed';
+import Waiting from './src/screens/game/waiting';
 
 const Stack = createNativeStackNavigator();
 const BottomNavigator = createBottomTabNavigator();
@@ -38,6 +39,7 @@ export default function App() {
           <Stack.Screen name="JoinGame" component={JoinGame} />
           <Stack.Screen name="Tutorial" component={Tutorial} />
           <Stack.Screen name="Game" component={Game} />
+          <Stack.Screen name="Waiting" component={Waiting} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>
