@@ -30,8 +30,11 @@ export default function JoinGame({ navigation }: { navigation: NavigationProp<an
             setLoading(false);
             return;
         }
-
-        navigation.navigate("Ready", { game_id: game.id })
+        if (game.start_time !== null) {
+            navigation.navigate("Game", { game_id: game.id })
+        } else {
+            navigation.navigate("Ready", { game_id: game.id })
+        }
         setLoading(false);
     }
 
