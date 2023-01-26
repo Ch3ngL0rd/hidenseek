@@ -38,7 +38,9 @@ export default function App() {
           <Stack.Screen name="Ready" component={Ready} />
           <Stack.Screen name="JoinGame" component={JoinGame} />
           <Stack.Screen name="Tutorial" component={Tutorial} />
-          <Stack.Screen name="Game" component={Game} />
+          <Stack.Screen name="Game" component={Game} options={
+            { headerShown: false }
+          } />
           <Stack.Screen name="Waiting" component={Waiting} />
         </Stack.Navigator>
       </NavigationContainer>
