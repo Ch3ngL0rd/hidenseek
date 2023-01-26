@@ -4,6 +4,7 @@ import React from 'react';
 import { ActionSheetIOS, ActivityIndicator, Button, SafeAreaView, Text } from 'react-native';
 import { useQuery } from 'react-query';
 import { supabase } from '../../settings/supabase';
+import { useAuth } from '../../hooks/useAuth';
 
 // Ready up screen is a waiting screen for the game to start
 // params must contain game_id  (game id)
@@ -24,12 +25,14 @@ interface GameInterface {
 }
 
 export default function Ready({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<any> }) {
+    const auth = useAuth();
     const [loading, setLoading] = React.useState<boolean>(true);
     const [error, setError] = React.useState<string | null>(null);
     const [game, setGame] = React.useState<GameInterface | undefined>(undefined);
     const { game_id } = route.params;
 
     React.useEffect(() => {
+        setLoading(true)
         const game = supabase
             .from("games")
             .select(`
@@ -41,21 +44,21 @@ export default function Ready({ navigation, route }: { navigation: NavigationPro
             .then(
                 (res) => {
                     console.log(res);
-                    if (res.error === null) {
-                        setLoading(false);
+                    if (res.error) {
+                        setError(res.error.message)
                     } else {
-                        setError(res.error.message);
+                        setGame(res.data)
                     }
-                    setGame(res.data)
+                    setLoading(false)
                 }
             )
-        console.log(game);
         const game_update = supabase.channel('custom-all-channel')
             .on(
                 'postgres_changes',
                 { event: '*', schema: 'public', table: 'games' },
                 (payload) => {
                     console.log('Change received!', payload)
+                    if (payload.new) { setGame(payload.new) }
                 }
             )
             .subscribe()
@@ -63,6 +66,37 @@ export default function Ready({ navigation, route }: { navigation: NavigationPro
             game_update.unsubscribe()
         }
     }, [])
+
+    React.useEffect(() => {
+        if (game === undefined) return;
+        if (game.start_time !== null) {
+            navigation.navigate("Game", { game_id: game_id })
+        }
+    }, [game])
+
+    React.useEffect(() => {
+        const insertUser = async () => {
+
+            const { error } = await supabase
+                .from('players')
+                .upsert([{ profile_id: auth.user?.id, game_id: game_id }])
+
+            if (error) {
+                console.log(error)
+            }
+        }
+        insertUser();
+    }, [])
+
+    const leaveGame = () => {
+        supabase
+            .from('players')
+            .delete()
+            .eq('profile_id', auth.user?.id)
+            .eq('game_id', game_id).then((res) => console.log(res))
+
+        navigation.navigate("Home")
+    }
 
     if (loading || game === undefined) {
         return (
@@ -78,7 +112,7 @@ export default function Ready({ navigation, route }: { navigation: NavigationPro
             <Text className="text-xl font-bold">Created by: {game.creator.username}</Text>
             <Text className="text-xl font-bold">Game Code: {game.code}</Text>
             <Text className="text-xl font-bold">Game starting soon</Text>
-            <Button title="Leave Game" onPress={() => navigation.navigate("Home")} />
+            <Button title="Leave Game" onPress={leaveGame} />
         </SafeAreaView>
     );
 }
