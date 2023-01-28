@@ -1,7 +1,9 @@
-import { NavigationProp, RouteProp } from '@react-navigation/native';
+import { NavigationProp, RouteProp, getPathFromState } from '@react-navigation/native';
 import React from 'react';
-import { Button, SafeAreaView, Text } from 'react-native';
+import { Button, SafeAreaView, Text, View, Image } from 'react-native';
 import { getGame } from '../../hooks/getGame';
+import { getPlayers } from '../../hooks/getPlayers';
+import { supabase } from '../../settings/supabase';
 
 // A waiting screen for the players
 // params must contain game_id  (game id)
@@ -15,6 +17,8 @@ import { getGame } from '../../hooks/getGame';
 export default function Waiting({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<any, any> }) {
     const { game_id } = route.params;
     const { game, loading, error } = getGame(game_id);
+    const { players } = getPlayers(game_id);
+    const [url, setUrl] = React.useState<string | undefined>(undefined);
     const [countdown, setCountdown] = React.useState<number | undefined>(undefined)
 
     React.useEffect(() => {
@@ -34,10 +38,32 @@ export default function Waiting({ navigation, route }: { navigation: NavigationP
     }, [game])
 
     React.useEffect(() => {
+        players?.forEach((player) => {
+            getImage(player.avatar);
+        }
+        )
+    }, [players])
+
+    React.useEffect(() => {
         if (countdown !== undefined && countdown <= 0) {
-            navigation.navigate("Game", { game_id: game_id })
+            // navigation.navigate("Game", { game_id: game_id })
+            // navigates to game screen and prevents going back
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Game', params: { game_id: game_id } }],
+            });
         }
     }, [countdown])
+
+    const getImage = async (uri: string) => {
+        // gets image from supabase
+        console.log(`loading file ${uri} from avatars`);
+        const { data } = await supabase.storage.from('avatars').getPublicUrl(uri);
+        setUrl(data.publicUrl);
+        console.log(`url is ${data.publicUrl}`);
+        return data;
+
+    }
 
     if (loading || game === undefined || countdown === undefined) {
         return (
@@ -58,8 +84,21 @@ export default function Waiting({ navigation, route }: { navigation: NavigationP
     return (
         <SafeAreaView className="flex justify-center items-center flex-col">
             <Text>Waiting</Text>
+            <Text>Game name {game.name}</Text>
             <Text>Starts in {game.start_time}</Text>
             <Text>Game starts in {countdown} seconds</Text>
-        </SafeAreaView>
+            {url !== undefined && <Image source={{ uri: url }} style={{ width: 300, height: 300 }} />}
+            <Text>Players in game:</Text>
+            {
+                players.map((player) => {
+                    return (
+                        <View key={player.id}>
+                            <Text>{player.name}</Text>
+                            <Image source={{ uri: player.avatar }} />
+                        </View >
+                    )
+                })
+            }
+        </SafeAreaView >
     );
 }
