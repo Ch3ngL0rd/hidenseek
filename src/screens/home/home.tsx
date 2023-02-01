@@ -2,9 +2,11 @@ import { NavigationProp } from '@react-navigation/native';
 import React from 'react';
 import { SafeAreaView, Text, TouchableOpacity } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
+import { useGame } from '../../hooks/getGame';
 
 export default function Home({ navigation }: { navigation: NavigationProp<any> }) {
     const [loading, setLoading] = React.useState<boolean>(true);
+    const game = useGame();
 
     const auth = useAuth();
     React.useEffect(() => {
@@ -14,6 +16,12 @@ export default function Home({ navigation }: { navigation: NavigationProp<any> }
             setLoading(false);
         }
     }, [auth.userData])
+
+    React.useEffect(() => {
+        // for testing
+        game.joinGame(59)
+    },[])
+
 
     return (
         <SafeAreaView className="flex justify-center items-center flex-col">
@@ -26,6 +34,11 @@ export default function Home({ navigation }: { navigation: NavigationProp<any> }
             <TouchableOpacity onPress={() => navigation.navigate("CreateGame")}>
                 <Text>Create Game</Text>
             </TouchableOpacity>
-        </SafeAreaView>
+            <TouchableOpacity onPress={() =>
+                navigation.navigate("Game")
+            }>
+                <Text>Capture</Text>
+            </TouchableOpacity>
+        </SafeAreaView >
     );
 }   

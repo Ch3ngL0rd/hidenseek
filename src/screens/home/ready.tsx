@@ -5,7 +5,7 @@ import { ActionSheetIOS, ActivityIndicator, Button, SafeAreaView, Text } from 'r
 import { useQuery } from 'react-query';
 import { supabase } from '../../settings/supabase';
 import { useAuth } from '../../hooks/useAuth';
-import { getGame } from '../../hooks/getGame';
+import { useGame } from '../../hooks/getGame';
 
 // Ready up screen is a waiting screen for the game to start
 // params must contain game_id  (game id)
@@ -15,38 +15,39 @@ import { getGame } from '../../hooks/getGame';
 
 export default function Ready({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<any> }) {
     const auth = useAuth();
-    const { game_id } = route.params;
-    const { loading, error, game } = getGame(game_id);
+    const { loading, error, game } = useGame();
 
     React.useEffect(() => {
         if (game === undefined || game === null) return;
         if (game.start_time !== null) {
-            navigation.navigate("Game", { game_id: game_id })
+            navigation.navigate("Game")
         }
     }, [game])
 
     React.useEffect(() => {
+        if (game === null || game === undefined) return;
         const insertUser = async () => {
 
             const { error } = await supabase
                 .from('players')
-                .upsert([{ profile_id: auth.user?.id, game_id: game_id }])
+                .upsert([{ profile_id: auth.user?.id, game_id: game.id }])
 
             if (error) {
                 console.log(error)
             }
         }
         insertUser();
-    }, [])
+    }, [game])
 
     const leaveGame = () => {
+        if (game === null || game === undefined) return;
         supabase
             .from('players')
             .delete()
             .eq('profile_id', auth.user?.id)
-            .eq('game_id', game_id).then((res) => console.log(res))
+            .eq('game_id', game.id).then((res) => console.log(res))
 
-        navigation.navigate("Waiting", { game_id: game_id })
+        navigation.navigate("Waiting", { game_id: game.id })
     }
 
     if (loading === true || game === undefined) {

@@ -2,11 +2,13 @@ import { NavigationProp } from '@react-navigation/native';
 import React from 'react';
 import { Button, SafeAreaView, Text, TextInput } from 'react-native';
 import { supabase } from '../../settings/supabase';
+import { useGame } from '../../hooks/getGame';
 
 export default function JoinGame({ navigation }: { navigation: NavigationProp<any> }) {
     const [gameCode, setGameCode] = React.useState<string>('');
     const [loading, setLoading] = React.useState<boolean>(false);
     const [message, setMessage] = React.useState<string>("");
+    const game = useGame();
 
     const joinGame = async () => {
         setLoading(true);
@@ -30,6 +32,8 @@ export default function JoinGame({ navigation }: { navigation: NavigationProp<an
             setLoading(false);
             return;
         }
+        // updates getGame hook
+        game.joinGame(game.id)
         if (game.start_time !== null) {
             navigation.navigate("Game", { game_id: game.id })
         } else {

@@ -7,7 +7,7 @@ interface Player {
     profile_id: string,
 }
 
-interface Profile {
+export interface Profile {
     id: string,
     name: string,
     username: string,
