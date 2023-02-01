@@ -39,6 +39,7 @@ export default function UploadWidget({ size, onUpload, id }: Props) {
                 throw new Error('File too large');
             }
 
+
             const file_extension = file.uri.split('.').pop();
             const base64_representation = `data:${file.type};base64,${file.base64}`;
 

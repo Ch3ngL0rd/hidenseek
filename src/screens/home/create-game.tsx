@@ -3,6 +3,7 @@ import React from 'react';
 import { Button, Pressable, SafeAreaView, Text, View } from 'react-native';
 import { supabase } from '../../settings/supabase';
 import { useAuth } from '../../hooks/useAuth';
+import { useGame } from '../../hooks/getGame';
 
 const nouns: string[] =
     ['Dogs', 'Noobs', 'Potatoes', 'Aunties', 'Fangirls', 'Fools',
@@ -23,6 +24,7 @@ interface GameForm {
 
 export default function CreateGame({ navigation }: { navigation: NavigationProp<any> }) {
     const auth = useAuth();
+    const game = useGame();
     const [name, setName] = React.useState<string>('');
     const [gameLength, setGameLength] = React.useState<number>(15);
     const [loading, setLoading] = React.useState<boolean>(false);
@@ -65,6 +67,7 @@ export default function CreateGame({ navigation }: { navigation: NavigationProp<
                 game_form
             ])
             .select()
+            .single()
         if (error) {
             console.log(error);
             setError(error.message)
@@ -74,6 +77,8 @@ export default function CreateGame({ navigation }: { navigation: NavigationProp<
             if (data.length === 0) {
                 setError("Error creating game");
             } else {
+                // Join game
+                game.joinGame(data.id)
                 navigation.navigate("StartGame", { game_id: data[0].id })
             }
         }

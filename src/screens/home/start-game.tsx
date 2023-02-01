@@ -2,26 +2,24 @@
 import { NavigationProp, RouteProp } from '@react-navigation/native';
 import React from 'react';
 import { Button, SafeAreaView, Text, View } from 'react-native';
-import { getGame } from '../../hooks/getGame';
+import { useGame } from '../../hooks/getGame';
 import { useQuery } from 'react-query';
 import { supabase } from '../../settings/supabase';
 import { getPlayers } from '../../hooks/getPlayers';
 
 
 export default function StartGame({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<any, any> }) {
-    const { game_id } = route.params;
-    const { game, loading, error } = getGame(game_id);
-    // const [players, setPlayers] = React.useState<Profile[]>([]);
-    const { players } = getPlayers(game_id);
+    const { game, loading, error } = useGame();
+    const { players } = getPlayers(game!.id);
 
     const startGame = () => {
         // Sets the game time to the current time as a unix timestamp and returns the record
         supabase
             .rpc('start_game', {
-                game_id
+                game_id: game!.id
             }).then((res) => {
                 if (res.error === null) {
-                    navigation.navigate("Waiting", { game_id: game_id })
+                    navigation.navigate("Waiting",)
                 }
             })
 

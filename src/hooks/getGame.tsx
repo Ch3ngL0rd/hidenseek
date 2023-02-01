@@ -13,13 +13,27 @@ interface GameInterface {
     start_time: string | null,
 }
 
-export const getGame = (game_id: number) => {
+const gameContext = React.createContext<any>(undefined);
+
+// Wrapper with Authentication Contenxt
+export const GameProvider = ({ children }: { children: React.ReactNode }) => {
+    const game = getGame();
+    return <gameContext.Provider value={game}>{children}</gameContext.Provider>
+}
+
+export const useGame = () => {
+    return React.useContext(gameContext);
+}
+
+const getGame = () => {
+    const [game_id, setGameID] = React.useState<number | undefined>(undefined)
     const [loading, setLoading] = React.useState<boolean>(true);
     const [error, setError] = React.useState<string | null>(null);
     // Undefined while loading, null if not found, GameInterface if found
     const [game, setGame] = React.useState<GameInterface | null | undefined>(undefined);
 
     React.useEffect(() => {
+        if (!game_id) { return }
         setLoading(true)
         const game = supabase
             .from("games")
@@ -33,6 +47,7 @@ export const getGame = (game_id: number) => {
                 (res) => {
                     console.log(res);
                     if (res.error) {
+                        console.log(res.error);
                         setError(res.error.message)
                     } else {
                         setGame(res.data)
@@ -56,12 +71,17 @@ export const getGame = (game_id: number) => {
         return () => {
             game_update.unsubscribe()
         }
-    }, [])
+    }, [game_id])
+
+    const joinGame = (game_id: number) => {
+        setGameID(game_id)
+    }
 
 
     return {
         game,
         error,
-        loading
+        loading,
+        joinGame
     }
 }

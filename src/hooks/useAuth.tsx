@@ -130,13 +130,14 @@ const useProvideAuth = (): AuthInterface => {
         let { data: profiles, error } = await supabase
             .from('profiles')
             .select("*")
-            .eq('id', userId);
+            .eq('id', userId)
+            .single();
         if (error) {
             throw new Error(error.message);
-        } else if (profiles?.length === 0) {
+        } else if (profiles === null) {
             setUserData(undefined);
         } else {
-            setUserData(profiles?.at(0));
+            setUserData(profiles);
         }
     }
 

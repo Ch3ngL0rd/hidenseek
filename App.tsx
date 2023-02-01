@@ -13,6 +13,8 @@ import StartGame from './src/screens/home/start-game';
 import Ready from './src/screens/home/ready';
 import Feed from './src/screens/game/feed';
 import Waiting from './src/screens/game/waiting';
+import Capture from './src/screens/game/capture';
+import { GameProvider } from './src/hooks/getGame';
 
 const Stack = createNativeStackNavigator();
 const BottomNavigator = createBottomTabNavigator();
@@ -20,7 +22,8 @@ const BottomNavigator = createBottomTabNavigator();
 const Game = () => {
   return (
     <BottomNavigator.Navigator>
-      <BottomNavigator.Screen name="Feed" component={Feed} />
+      {/* <BottomNavigator.Screen name="Feed" component={Feed} /> */}
+      <BottomNavigator.Screen name="Capture" component={Capture} />
     </BottomNavigator.Navigator>
   )
 }
@@ -28,22 +31,24 @@ const Game = () => {
 export default function App() {
   return (
     <AuthProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="CreateAccount" component={CreateAccount}
-            options={{ headerShown: false }} />
-          <Stack.Screen name="CreateGame" component={CreateGame} />
-          <Stack.Screen name="StartGame" component={StartGame} />
-          <Stack.Screen name="Ready" component={Ready} />
-          <Stack.Screen name="JoinGame" component={JoinGame} />
-          <Stack.Screen name="Tutorial" component={Tutorial} />
-          <Stack.Screen name="Game" component={Game} options={
-            { headerShown: false }
-          } />
-          <Stack.Screen name="Waiting" component={Waiting} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <GameProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="CreateAccount" component={CreateAccount}
+              options={{ headerShown: false }} />
+            <Stack.Screen name="CreateGame" component={CreateGame} />
+            <Stack.Screen name="StartGame" component={StartGame} />
+            <Stack.Screen name="Ready" component={Ready} />
+            <Stack.Screen name="JoinGame" component={JoinGame} />
+            <Stack.Screen name="Tutorial" component={Tutorial} />
+            <Stack.Screen name="Game" component={Game} options={
+              { headerShown: false }
+            } />
+            <Stack.Screen name="Waiting" component={Waiting} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </GameProvider>
     </AuthProvider>
   );
 }
